@@ -24,23 +24,23 @@ void JoyCtl::init()
 
 void JoyCtl::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg) 
 {   
-	float pitch; float thrust; float roll; float yaw; 
+	float x_dir, y_dir, yaw;  
 	std::vector<float> axes_ = msg->axes; 
 	
-        RCLCPP_INFO_STREAM(this->get_logger(), "AXES are: "  << axes_.size()); 
-        //roll = axes_.at(3); pitch = axes_.at(4); 
-	//yaw = axes_.at(0); thrust = axes_.at(1);     
+        x_dir = axes_.at(3); 
+	y_dir = axes_.at(2); 
+	yaw = axes_.at(4);
 
     // Enabling joystick functionality
-    // Arrow up + R1 --> turnsOff
-    if (msg->axes.at(5) == 1 && msg->buttons.at(4))
+    // R2 pressed --> joy on
+    if (msg->buttons.at(7) == 1)
     { 
         RCLCPP_INFO(this->get_logger(), "Turning joystick on!");    
         setEnableJoy(true); 
     }
 
-    // Arrow up + R2 --> turnsOn
-    if (msg->axes.at(5) == 1 && msg->axes.at(2) == -1)
+    // R2 released --> joy off
+    if (msg->buttons.at(7) == 0)
     {
         
         RCLCPP_INFO(this->get_logger(), "Turning joystick off!"); 
@@ -62,12 +62,13 @@ void JoyCtl::joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg)
         sF_ = static_cast<float>(sF) / 10.0;  
         RCLCPP_INFO_STREAM_ONCE(this->get_logger(), "[OPERATION MODE]: Slow!"); 
     }
-
-
+	
+	//hardcode scaling factor for test
+	sF_ = 50; 
 	// Create teleop msg
 	auto teleop_msg 	    = geometry_msgs::msg::Twist(); 
-	teleop_msg.linear.x	    = pitch  * sF_; 
-	teleop_msg.linear.y 	= roll   * sF_; 
+	teleop_msg.linear.x	    = x_dir  * sF_; 
+	teleop_msg.linear.y 	= y_dir   * sF_; 
 	teleop_msg.angular.z 	= yaw    * sF_; 
     
     if (enableJoy_){
