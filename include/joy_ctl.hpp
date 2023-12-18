@@ -17,6 +17,7 @@
 
 //* srvs
 #include "std_srvs/srv/empty.hpp"
+#include "std_srvs/srv/trigger.hpp" 
 
 using namespace std::chrono_literals; 
 using std::placeholders::_1; 
@@ -43,11 +44,7 @@ class JoyCtl: public rclcpp::Node
 
 
 		// clients 
- 		rclcpp::Client<std_srvs::srv::Empty>::SharedPtr		chooseUavClient_; // Could be used for initing all UAVs
-                rclcpp::Client<std_srvs::srv::Empty>::SharedPtr		openGripperClient_; 
-                rclcpp::Client<std_srvs::srv::Empty>::SharedPtr     closeGripperClient_; 
-		rclcpp::Client<std_srvs::srv::Empty>::SharedPtr		startSuctionClient_; 
-		rclcpp::Client<std_srvs::srv::Empty>::SharedPtr		stopSuctionClient_; 
+ 		rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr  jingleBellsClient_; // Could be used for initing all UAVs
 
 		void init(); 
 		void joy_callback(const sensor_msgs::msg::Joy::SharedPtr msg); 
